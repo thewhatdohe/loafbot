@@ -1,5 +1,6 @@
 import discord
 import os
+import random
 
 # ---token---
 token = os.getenv("TOKEN")
@@ -19,8 +20,20 @@ class MyClient(discord.Client):
 
         # ---!say---
         if message.content.startswith('!say'):
-            say_command_reply = message.content.removeprefix('!say')
-            await message.reply(say_command_reply)
+            await message.reply(message.content.removeprefix('!say'))
+
+        # ---!roll---
+        if message.content.startswith('!roll'):
+            data = message.content.split()
+
+            try:
+                n1 = int(data[1])
+                n2 = int(data[2])
+                await message.reply(str(random.randint(n1, n2)))
+            except (IndexError, ValueError):
+                await message.reply("Syntax: !roll <# min> <# max>")
+
+
 
 if token is None:
     raise ValueError("TOKEN environment variable not set")
