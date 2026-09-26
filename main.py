@@ -4,11 +4,13 @@ import os
 import random
 import asyncio
 import string
+from google import genai
 from dotenv import load_dotenv
 
 # ---token---
 load_dotenv()
 token = os.getenv("TOKEN")
+api = os.getenv("GEMINI_API_KEY")
 
 if token is None:
     raise ValueError("TOKEN environment variable not set")
@@ -56,9 +58,14 @@ async def roll(ctx, min_n: int = None, max_n: int = None):
 
 # ---!talk---
 @bot.command()
-async def talk(ctx):
-    """AI chat mode (not implemented yet)."""
-    await ctx.reply("AI mode isn't implemented yet, stay tuned!")
+async def talk(ctx, text: str = ''):
+    """Gemini API chatbot, only text for now"""
+    client = genai.Client()
+    interaction = client.interactions.create(
+    model="gemini-3.5-flash-lite",
+    input=text
+    )
+    await ctx.reply(interaction.output_text)
 
 
 # ---!ping---
