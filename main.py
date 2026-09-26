@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 token = os.getenv("TOKEN")
 gemini_api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=gemini_api_key)
 
 if token is None:
     raise ValueError("TOKEN environment variable not set")
@@ -60,11 +61,18 @@ async def roll(ctx, min_n: int = None, max_n: int = None):
 @bot.command()
 async def talk(ctx, text: str = ''):
     """Gemini API chatbot, only text for now"""
-    client = genai.Client(api_key=gemini_api_key)
-    interaction = client.interactions.create(
-    model="gemini-3.5-flash-lite",
-    input=text
-    )
+    async with ctx.typing():
+        try:
+            # use async to prevent bot freeze
+            interaction = await client.aio.interactions.create(
+                model="gemini-3.5-flash-lite",
+                input=text
+            )
+            
+            # Send the output back
+            await ctx.reply(interaction.output_text)
+        except Exception as e:
+            print(e)
     await ctx.reply(interaction.output_text)
 
 
