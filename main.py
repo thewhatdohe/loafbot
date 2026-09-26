@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 # ---token---
 load_dotenv()
 token = os.getenv("TOKEN")
-api = os.getenv("GEMINI_API_KEY")
+gemini_api_key = os.getenv("GEMINI_API_KEY")
 
 if token is None:
     raise ValueError("TOKEN environment variable not set")
@@ -60,7 +60,7 @@ async def roll(ctx, min_n: int = None, max_n: int = None):
 @bot.command()
 async def talk(ctx, text: str = ''):
     """Gemini API chatbot, only text for now"""
-    client = genai.Client()
+    client = genai.Client(api_key=gemini_api_key)
     interaction = client.interactions.create(
     model="gemini-3.5-flash-lite",
     input=text
