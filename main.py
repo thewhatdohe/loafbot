@@ -4,8 +4,10 @@ import os
 import random
 import asyncio
 import string
+from dotenv import load_dotenv
 
 # ---token---
+load_dotenv()
 token = os.getenv("TOKEN")
 
 if token is None:
