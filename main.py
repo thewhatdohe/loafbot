@@ -59,21 +59,22 @@ async def roll(ctx, min_n: int = None, max_n: int = None):
 
 # ---!talk---
 @bot.command()
-async def talk(ctx, text: str = ''):
+async def talk(ctx, *, text: str = ''):
     """Gemini API chatbot, only text for now"""
+    if not text.strip():
+        await ctx.reply("Please provide a prompt!")
+        return
+
     async with ctx.typing():
         try:
-            # use async to prevent bot freeze
             interaction = await client.aio.interactions.create(
                 model="gemini-3.5-flash-lite",
                 input=text
             )
-            
-            # Send the output back
             await ctx.reply(interaction.output_text)
         except Exception as e:
             print(e)
-    await ctx.reply(interaction.output_text)
+            await ctx.reply("Failed to generate response.")
 
 
 # ---!ping---
